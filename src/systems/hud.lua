@@ -18,12 +18,8 @@ function HUD.draw(totalSparks, multiplier, bouncerCount, cornerHits, arena, seed
     }
     local shapeName = shapeNames[arena.sides] or "Polygon"
 
-    love.graphics.printf("Screen A — " .. shapeName, screenWidth - 200, 10, 190, "right")
-    love.graphics.printf("Sides: " .. arena.sides, screenWidth - 200, 30, 190, "right")
-    love.graphics.printf("Seed: " .. seed, screenWidth - 200, 50, 190, "right")
-
     local screenHeight = love.graphics.getHeight()
-    love.graphics.print("U: Upgrades | ESC: Pause", 10, screenHeight - 25)
+    love.graphics.print("ESC: Pause | F: Free Mode", 10, screenHeight - 25)
 end
 
 return HUD

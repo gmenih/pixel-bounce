@@ -147,20 +147,22 @@ end
 
 function Arena.randomPointInside(arena, padding)
     local maxAttempts = 100
+
     for attempt = 1, maxAttempts do
         local angle = math.random() * 2 * math.pi
-        local r = math.sqrt(math.random()) * (arena.radius - padding)
+        local r = math.sqrt(math.random()) * (arena.radius - padding * 2)
         local x = arena.centerX + r * math.cos(angle)
         local y = arena.centerY + r * math.sin(angle)
 
         local inside = true
         for _, edge in ipairs(arena.edges) do
-            local toPoint = {
-                x = x - edge.v1.x,
-                y = y - edge.v1.y
-            }
-            local dotProd = toPoint.x * edge.normalX + toPoint.y * edge.normalY
-            if dotProd < -padding then
+            local v1x, v1y = edge.v1.x, edge.v1.y
+            local dx = x - v1x
+            local dy = y - v1y
+
+            local dist = dx * edge.normalX + dy * edge.normalY
+
+            if dist < padding then
                 inside = false
                 break
             end

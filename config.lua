@@ -15,6 +15,39 @@ Config = {
 		wallPadding = 8, -- min spawn distance from wall
 	},
 
+	sparkTypes = {
+		white = {
+			name = "white",
+			value = 1,
+			spawnWeight = 100.0,
+			color = { 1.0, 1.0, 1.0 }
+		},
+		blue = {
+			name = "blue",
+			value = 5,
+			spawnWeight = 5.0,
+			color = { 0.3, 0.6, 1.0 }
+		},
+		green = {
+			name = "green",
+			value = 15,
+			spawnWeight = 2.0,
+			color = { 0.3, 1.0, 0.4 }
+		},
+		purple = {
+			name = "purple",
+			value = 25,
+			spawnWeight = 0.5,
+			color = { 0.8, 0.3, 1.0 }
+		},
+		pink = {
+			name = "pink",
+			value = 50,
+			spawnWeight = 0.05,
+			color = { 1.0, 0.4, 0.7 }
+		}
+	},
+
 	corner = {
 		proximityPx = 14.0, -- distance threshold to vertex
 		angleDeg = 18.0, -- within ± this of the corner bisector

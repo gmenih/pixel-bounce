@@ -60,6 +60,9 @@ function GameplayState:update(dt)
         self:fixedUpdate(Config.physics.fixedDt)
         self.accumulator = self.accumulator - Config.physics.fixedDt
     end
+
+    local mouseX, mouseY = love.mouse.getPosition()
+    Spark.updateHover(self.sparks, mouseX, mouseY)
 end
 
 function GameplayState:fixedUpdate(dt)
@@ -111,11 +114,16 @@ function GameplayState:spawnSpark()
         return
     end
 
+    local sparkType = Spark.selectRandomType()
+    local typeConfig = Config.sparkTypes[sparkType]
+
     local pos = Arena.randomPointInside(self.arena, Config.physics.wallPadding)
     spark.x = pos.x
     spark.y = pos.y
     spark.active = true
-    spark.value = 1
+    spark.sparkType = sparkType
+    spark.value = typeConfig.value
+    spark.color = typeConfig.color
 
     table.insert(self.sparks, spark)
 end
@@ -180,23 +188,29 @@ function GameplayState:draw()
 
     HUD.draw(self.totalSparks, self.globalMultiplier, #self.bouncers, self.cornerHits, self.arena, Config.rngSeed)
 
-    if self.upgradesVisible then
-        Upgrades.draw(self.totalSparks)
-    end
+    Upgrades.draw(self.totalSparks)
 end
 
 function GameplayState:keypressed(key)
     if key == "escape" then
         StateManager.setState("pause")
-    elseif key == "u" then
-        self.upgradesVisible = not self.upgradesVisible
-    elseif key == "f" and self.upgradesVisible then
+    elseif key == "f" then
         Upgrades.freeMode = not Upgrades.freeMode
     end
 end
 
 function GameplayState:mousepressed(x, y, button)
-    if self.upgradesVisible and button == 1 then
+    if button == 1 then
+        for i = #self.sparks, 1, -1 do
+            local spark = self.sparks[i]
+            if spark.active and Spark.isHovered(spark, x, y) then
+                self.totalSparks = self.totalSparks + spark.value * self.globalMultiplier
+                spark.active = false
+                table.insert(self.sparkPool, table.remove(self.sparks, i))
+                return
+            end
+        end
+
         local purchased, cost = Upgrades.handleClick(x, y, self.totalSparks)
         if purchased then
             self.totalSparks = self.totalSparks - cost

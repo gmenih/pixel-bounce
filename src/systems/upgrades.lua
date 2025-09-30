@@ -43,42 +43,45 @@ end
 function Upgrades.draw(currentSparks)
     local screenWidth = love.graphics.getWidth()
     local screenHeight = love.graphics.getHeight()
-    local panelWidth = 500
-    local panelHeight = 400
-    local panelX = screenWidth / 2 - panelWidth / 2
-    local panelY = screenHeight / 2 - panelHeight / 2
+    local panelWidth = 220
+    local panelHeight = 440
+    local panelX = screenWidth - panelWidth - 10
+    local panelY = 10
 
-    love.graphics.setColor(0.2, 0.2, 0.2, 0.95)
+    love.graphics.setColor(0.2, 0.2, 0.2, 0.9)
     love.graphics.rectangle("fill", panelX, panelY, panelWidth, panelHeight)
 
     love.graphics.setColor(Config.colors.hud)
-    love.graphics.printf("UPGRADES", panelX, panelY + 20, panelWidth, "center")
+    love.graphics.printf("UPGRADES", panelX, panelY + 10, panelWidth, "center")
 
     local channels = {
-        {name = "speed", label = "Speed", desc = "+10% speed"},
-        {name = "size", label = "Size", desc = "+1.5 radius"},
-        {name = "magnet", label = "Magnetism", desc = "+22 magnet radius"},
-        {name = "cornering", label = "Cornering", desc = "+2 proximity/angle"}
+        {name = "speed", label = "Speed", desc = "+10%"},
+        {name = "size", label = "Size", desc = "+1.5"},
+        {name = "magnet", label = "Magnet", desc = "+22"},
+        {name = "cornering", label = "Corner", desc = "+2"}
     }
 
     Upgrades.buttons = {}
 
+    love.graphics.setColor(Config.colors.hud)
+    love.graphics.print("Sparks: " .. math.floor(currentSparks), panelX + 10, panelY + 35)
+
     for i, channel in ipairs(channels) do
-        local rowY = panelY + 70 + (i - 1) * 70
+        local rowY = panelY + 65 + (i - 1) * 75
         local level = Upgrades.levels[channel.name]
         local cost = Upgrades.freeMode and 0 or Upgrades.getCost(channel.name)
         local canAfford = Upgrades.freeMode or currentSparks >= cost
 
         love.graphics.setColor(Config.colors.hud)
-        love.graphics.print(channel.label .. " (Lv " .. level .. ")", panelX + 20, rowY)
+        love.graphics.print(channel.label .. " Lv" .. level, panelX + 10, rowY)
         love.graphics.setFont(love.graphics.getFont())
-        love.graphics.print(channel.desc, panelX + 20, rowY + 20)
+        love.graphics.print(channel.desc, panelX + 10, rowY + 15)
 
         local button = {
-            x = panelX + panelWidth - 140,
-            y = rowY,
-            width = 120,
-            height = 50,
+            x = panelX + 10,
+            y = rowY + 35,
+            width = panelWidth - 20,
+            height = 30,
             channel = channel.name,
             canAfford = canAfford
         }
@@ -99,17 +102,16 @@ function Upgrades.draw(currentSparks)
         love.graphics.rectangle("fill", button.x, button.y, button.width, button.height)
 
         love.graphics.setColor(Config.colors.buttonText)
-        love.graphics.printf("BUY\n" .. cost, button.x, button.y + 8, button.width, "center")
+        love.graphics.printf(cost, button.x, button.y + 8, button.width, "center")
     end
 
     love.graphics.setColor(Config.colors.hud)
-    local helpText = "Press U to close"
+    love.graphics.print("F: Free mode", panelX + 10, panelY + panelHeight - 30)
+
     if Upgrades.freeMode then
-        helpText = "FREE MODE | Press U to close"
-    else
-        helpText = helpText .. " | F for free mode"
+        love.graphics.setColor(0.3, 1.0, 0.4)
+        love.graphics.print("FREE MODE", panelX + 10, panelY + panelHeight - 15)
     end
-    love.graphics.printf(helpText, panelX, panelY + panelHeight - Config.ui.upgradesPanelBottomMargin, panelWidth, "center")
 end
 
 function Upgrades.handleClick(x, y, currentSparks)
